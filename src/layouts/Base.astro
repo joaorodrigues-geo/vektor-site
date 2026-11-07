@@ -1,8 +1,11 @@
 ---
 import '../styles/base.css';
 import { siInstagram, siGithub } from 'simple-icons';
-const { titulo, descricao, imagem, largo = false } = Astro.props;
-const url = new URL(Astro.url.pathname, Astro.site);
+const { titulo, descricao, imagem, largo = false, semIndice = false } = Astro.props;
+// O site é servido sem ".html" (Cloudflare redireciona /x.html para /x).
+// O endereço canónico tem de ser o mesmo que está no sitemap.
+const caminho = Astro.url.pathname.replace(/(index)?\.html$/, '').replace(/(.)\/$/, '$1');
+const url = new URL(caminho, Astro.site);
 const og = imagem ? new URL(`/estudos/${imagem}.jpg`, Astro.site) : null;
 ---
 <!doctype html>
@@ -13,7 +16,9 @@ const og = imagem ? new URL(`/estudos/${imagem}.jpg`, Astro.site) : null;
   <title>{titulo}</title>
   <meta name="description" content={descricao} />
   <meta name="theme-color" content="#0B2A3C" />
-  <link rel="canonical" href={url} />
+  {semIndice ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={url} />}
+  <meta property="og:site_name" content="Vektor · Geoanalytics" />
+  <meta property="og:type" content="website" />
   <meta property="og:title" content={titulo} />
   <meta property="og:description" content={descricao} />
   <meta property="og:url" content={url} />
@@ -46,7 +51,7 @@ const og = imagem ? new URL(`/estudos/${imagem}.jpg`, Astro.site) : null;
       <p>© Vektor · Geoanalytics · <a href="/pedir">Pedir um mapa</a> · <a href="/galeria">Galeria</a> · <a href="/privacidade">Privacidade</a> · sem cookies nem analítica</p>
       <p class="sociais">
         <a href="https://www.instagram.com/vektorgis" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><path d={siInstagram.path} /></svg>Instagram</a>
-        <a href="https://github.com/slimmjimmy99" rel="noopener" aria-label="GitHub"><svg viewBox="0 0 24 24" aria-hidden="true"><path d={siGithub.path} /></svg>GitHub</a>
+        <a href="https://github.com/joaorodrigues-geo" rel="noopener" aria-label="GitHub"><svg viewBox="0 0 24 24" aria-hidden="true"><path d={siGithub.path} /></svg>GitHub</a>
       </p>
     </div>
   </footer>
